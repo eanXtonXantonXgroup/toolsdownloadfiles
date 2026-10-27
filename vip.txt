@@ -1,2 +1,2 @@
 code1=KFGT6-V1YPI,expired=12jam
-code2=O8LOW-92A04,expired=24
+code2=O8LOW-92A04,expired=24jam
