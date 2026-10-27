@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10131d">
+<title>Ambivial Tools</title>
+<style>
+:root{--bg:#0b0e16;--panel:#131827;--panel2:#1b2234;--line:#2b3550;--text:#f2f5ff;--muted:#9aa7c2;--accent:#8b7cff;--accent2:#44d7c7;--danger:#ff7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2140 0,#0b0e16 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--panel2);color:var(--text)}button:hover{border-color:var(--accent)}input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#0d1220;color:var(--text);outline:none}input:focus{border-color:var(--accent)}.top{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:12px;padding:14px 16px;background:#0b0e16eF;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.hamb{font-size:22px;padding:6px 12px}.brand{font-weight:850;letter-spacing:.4px}.brand span{color:var(--accent2)}.grow{flex:1}.wrap{max-width:1000px;margin:auto;padding:22px 16px 60px}.hero{padding:22px 0 16px}.eyebrow{color:var(--accent2);font-size:12px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(28px,7vw,44px);line-height:1.1;margin:8px 0}.muted{color:var(--muted)}.search{margin:12px 0 18px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.filecard{display:flex;align-items:center;gap:12px;text-align:left;padding:15px;background:linear-gradient(145deg,#171e30,#111624);min-height:86px}.fileicon{width:46px;height:46px;object-fit:contain;flex-shrink:0;border-radius:10px;background:#0a0d15}.fileicon.fallback{display:grid;place-items:center;font-size:25px;color:var(--accent2)}.filename{font-weight:800;overflow-wrap:anywhere}.dlcount{font-size:12px;color:var(--muted);margin-top:4px}.empty{padding:24px;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}.hidden{display:none!important}.drawer{position:fixed;inset:0;z-index:10;background:#0009;display:flex}.side{width:min(310px,85vw);background:#111727;border-right:1px solid var(--line);padding:20px;overflow:auto}.side h3{margin-top:0}.side button{display:block;width:100%;text-align:left;margin:8px 0}.shade{flex:1}.modalback{position:fixed;inset:0;z-index:20;background:#000b;display:grid;place-items:center;padding:18px}.modal{width:min(460px,100%);max-height:90vh;overflow:auto;background:#121827;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 20px 80px #0009}.modal h2{margin:0 0 8px}.modal .field{margin:12px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.primary{background:linear-gradient(120deg,#7165f4,#4a8de8);border:0;font-weight:800}.good{color:var(--accent2)}.bad{color:var(--danger)}.notice{padding:10px 12px;background:#0d1220;border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow-wrap:anywhere}.foot{border-top:1px solid var(--line);margin-top:32px;padding-top:18px;font-size:12px;color:var(--muted)}.tiny{font-size:12px}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:12px;color:var(--muted)}a{color:#b9b2ff}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}@media(max-width:480px){.wrap{padding-top:10px}.hero{padding-top:14px}.grid{grid-template-columns:1fr}.modal{padding:18px}}
+</style>
+</head>
+<body>
+<header class="top"><button class="hamb" id="menuBtn" aria-label="Open menu">☰</button><div class="brand">AMBIVIAL <span>TOOLS</span></div><div class="grow"></div><span id="userBadge" class="pill">Guest</span><button id="authTop">Sign in</button></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">DOWNLOAD CENTER</div><h1>Tools, files & resources.</h1><div class="muted">Browse available downloads. Open a file card to read its details.</div></section>
+<input class="search" id="search" placeholder="Search tools..." aria-label="Search tools">
+<div id="fileGrid" class="grid"></div><div id="empty" class="empty hidden">No files found. Add files to the repository and update <code>files.json</code>.</div>
+<div class="foot">Ambivial Tools · Files and download counts are loaded from the configured catalog. Do not upload private account data to a public repository.</div>
+</main>
+<div id="drawer" class="drawer hidden"><aside class="side"><h3>Menu</h3><div id="sideIdentity" class="notice">Signed out</div><button data-page="home">⌂ &nbsp; Home</button><button data-page="account">♙ &nbsp; Account settings</button><button data-page="premium">✦ &nbsp; Premium access</button><hr style="border-color:var(--line)"><div class="muted tiny">CREATOR</div><p><b>Andrean Antono</b><br><a href="mailto:anton.id.dunia@gmail.com">anton.id.dunia@gmail.com</a><br><a href="https://instagram.com/ean_ambivial" target="_blank" rel="noopener">@ean_ambivial</a><br><a href="mailto:ean.ambivial@gmail.com">ean.ambivial@gmail.com</a></p><button id="closeDrawer">Close menu</button></aside><div class="shade" id="shade"></div></div>
+<div id="modalRoot"></div>
+<script>
+/*
+  STATIC GITHUB PAGES DEMO:
+  Put files.json, vip.txt, icon images, and downloadable files beside this HTML.
+  This front end cannot securely write account.txt, validate phone-number passwords,
+  enforce a shared 2-download limit, or count downloads across visitors. Use a backend
+  (e.g. Supabase/Firebase/Cloudflare Workers) for real accounts, VIP codes, and counts.
+*/
+const CONFIG={
+  catalog:"files.json",
+  vip:"vip.txt",
+  whatsapp:"https://wa.me/87785996770?text=%2AHi%2CDeveloper%20I%20want%20to%20get%20premium%20code%20give%20me%20list%20of%20codes%20and%20prices%2A",
+  fallbackFiles:[
+    {file:"nama=zalith-deskripsi=none-icon=icon1.zip",name:"Zalith",description:"No description provided.",icon:"icon1.png",downloads:0}
+  ]
+};
+const $=s=>document.querySelector(s);
+let files=[],user=null,unlocked=false,downloaded=new Set(),modalReturn=null;
+const safeText=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function fileFromFilename(filename,downloads=0){
+  const match=filename.match(/^nama=(.*?)-deskripsi=(.*?)-icon=(.*)$/i);
+  if(!match)return {file:filename,name:filename,description:"No description provided.",icon:"",downloads};
+  const rawName=match[1],desc=match[2],icon=match[3];
+  return {file:filename,name:rawName,description:desc==="none"?"No description provided.":desc,icon,downloads};
+}
+async function loadFiles(){
+  try{
+    const r=await fetch(CONFIG.catalog,{cache:"no-store"});
+    if(!r.ok)throw Error("catalog missing");
+    const data=await r.json();
+    files=(Array.isArray(data)?data:(data.files||[])).map(x=>{
+      if(typeof x==="string")return fileFromFilename(x);
+      return {...fileFromFilename(x.file||x.filename||x.name||""),...x};
+    }).filter(x=>x.file&&x.name);
+  }catch(e){files=CONFIG.fallbackFiles.map(x=>({...x}));}
+  renderFiles();
+}
+function renderFiles(){
+  const q=$("#search").value.trim().toLowerCase();
+  const visible=files.filter(f=>(f.name+" "+f.description+" "+f.file).toLowerCase().includes(q));
+  $("#fileGrid").innerHTML=visible.map((f,i)=>`<button class="filecard" data-file="${safeText(f.file)}"><img class="fileicon" src="${safeText(f.icon||"file-icon.png")}" alt="" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')"><span class="fileicon fallback hidden">▣</span><span style="min-width:0"><span class="filename">${safeText(f.name)}</span><span class="dlcount">↓ ${Number(f.downloads)||0} downloads</span></span></button>`).join("");
+  $("#empty").classList.toggle("hidden",visible.length!==0);
+  document.querySelectorAll("[data-file]").forEach(el=>el.addEventListener("click",()=>showFile(el.dataset.file)));
+}
+function openModal(html){$("#modalRoot").innerHTML=`<div class="modalback" id="modalback"><section class="modal">${html}</section></div>`;$("#modalback").addEventListener("click",e=>{if(e.target.id==="modalback")closeModal()});}
+function closeModal(){$("#modalRoot").innerHTML="";}
+function findFile(name){return files.find(f=>f.file===name)}
+function showFile(filename){
+ const f=findFile(filename);if(!f)return;
+ openModal(`<h2>${safeText(f.name)}</h2><p class="muted">${safeText(f.description||"No description provided.")}</p><div class="notice">Downloads: <b>${Number(f.downloads)||0}</b></div><p class="tiny muted">File type: ${safeText((f.file.split(".").pop()||"file").toUpperCase())}</p><div class="actions"><button onclick="closeModal()">Close</button><button class="primary" id="downloadBtn">Download</button></div>`);
+ $("#downloadBtn").onclick=()=>startDownload(f);
+}
+function startDownload(f){
+ if(!user){closeModal();showAuth("signin","Sign in to download files.");return}
+ if(!unlocked && downloaded.size>=2){closeModal();showPremium("You have used your 2 demo downloads. Unlock Premium to continue.");return}
+ const a=document.createElement("a");a.href=f.url||f.file;a.download=f.name||"download";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+ downloaded.add(f.file);
+ closeModal();
+ alert("Download started. Note: on a static GitHub Pages site, download limits and shared counts cannot be securely enforced.");
+}
+function showAuth(mode="register",message=""){
+ const title=mode==="register"?"Create your account":"Sign in";
+ openModal(`<h2>${title}</h2><p class="muted">Demo only — do not enter real personal information on this static page.</p>${message?`<div class="notice">${safeText(message)}</div>`:""}<div class="field"><label>Username</label><input id="authUsername" autocomplete="username" placeholder="Choose a username"></div><div class="field"><label>Phone number</label><input id="authPhone" inputmode="tel" placeholder="+62..." autocomplete="tel"></div><div class="field">${mode==="register"?'<label>Email address</label><input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">':'<label>Email (optional)</label><input id="authEmail" type="email" placeholder="you@example.com">'}</div><p class="tiny muted">A phone number is not a safe password. This demo stores account details only in this browser, not in account.txt.</p><div id="authError" class="bad tiny"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="primary" id="authSubmit">${title}</button></div><p class="tiny">${mode==="register"?'Already registered? <a href="#" id="switchAuth">Sign in</a>':'New here? <a href="#" id="switchAuth">Create an account</a>'}</p>`);
+ $("#switchAuth").onclick=e=>{e.preventDefault();showAuth(mode==="register"?"signin":"register")};
+ $("#authSubmit").onclick=()=>{
+  const username=$("#authUsername").value.trim(),phone=$("#authPhone").value.trim(),email=$("#authEmail").value.trim();
+  if(!username||!phone||(mode==="register"&&!email)){$("#authError").textContent="Please complete the required fields.";return}
+  let accounts={};try{accounts=JSON.parse(localStorage.getItem("ambivial_demo_accounts")||"{}")}catch{}
+  if(mode==="register"&&accounts[username]){$("#authError").textContent="That username already exists.";return}
+  if(mode==="signin"&&(!accounts[username]||accounts[username].phone!==phone)){$("#authError").textContent="Username or phone number does not match this browser's demo account.";return}
+  if(mode==="register"){accounts[username]={phone,email};localStorage.setItem("ambivial_demo_accounts",JSON.stringify(accounts))}
+  user={username,phone,email:email||(accounts[username]||{}).email||""};localStorage.setItem("ambivial_demo_session",JSON.stringify(user));downloaded=new Set();closeModal();refreshUser();
+ };
+}
+function showPremium(message=""){
+ openModal(`<h2>✦ Premium Access</h2><p class="muted">${safeText(message||"Enter a valid premium code to unlock more downloads.")}</p><div class="field"><label>Premium code</label><input id="vipCode" placeholder="CODE YOUR PREMIUM TOOLS" autocomplete="off"></div><div id="vipError" class="bad tiny"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="primary" id="vipSubmit">Unlock Premium</button></div><p><a href="${CONFIG.whatsapp}" target="_blank" rel="noopener">Get a premium code</a></p><p class="tiny muted">A public vip.txt file exposes every code to visitors. This demo does not securely validate expiry or code usage.</p>`);
+ $("#vipSubmit").onclick=async()=>{
+  const code=$("#vipCode").value.trim();if(!code){$("#vipError").textContent="Enter a code.";return}
+  try{
+   const r=await fetch(CONFIG.vip,{cache:"no-store"});if(!r.ok)throw Error();
+   const txt=await r.text(),now=Date.now();
+   const rows=txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+   const entry=rows.find(s=>s.startsWith("code")&&s.toUpperCase().includes(code.toUpperCase()));
+   if(!entry){$("#vipError").textContent="Invalid code.";return}
+   // Text-file expiry labels are not a secure expiration timestamp; only a demo unlock is applied.
+   unlocked=true;localStorage.setItem("ambivial_demo_premium","true");closeModal();refreshUser();alert("Premium unlocked in this browser demo.");
+  }catch(e){$("#vipError").textContent="Could not read vip.txt. Check that the file exists beside index.html."}
+ };
+}
+function refreshUser(){
+ $("#userBadge").textContent=user?user.username:"Guest";$("#authTop").textContent=user?"Account":"Sign in";
+ $("#sideIdentity").innerHTML=user?`Signed in as <b>${safeText(user.username)}</b><br><span class="tiny">${safeText(user.email)}</span><br><span class="tiny">${safeText(user.phone)}</span>`:"You are currently signed out.";
+}
+function showAccount(){
+ if(!user){showAuth("signin");return}
+ openModal(`<h2>Account settings</h2><div class="notice">Username: <b>${safeText(user.username)}</b><br>Email: ${safeText(user.email)}<br>Phone: ${safeText(user.phone)}</div><p class="tiny muted">Changes here are local to this browser only. A real multi-user site needs a backend and verified email/phone flows.</p><div class="field"><label>New email</label><input id="newEmail" type="email" value="${safeText(user.email)}"></div><div class="field"><label>New phone number</label><input id="newPhone" value="${safeText(user.phone)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button id="saveAccount" class="primary">Save changes</button><button id="logoutBtn">Log out</button></div>`);
+ $("#saveAccount").onclick=()=>{user.email=$("#newEmail").value.trim();user.phone=$("#newPhone").value.trim();localStorage.setItem("ambivial_demo_session",JSON.stringify(user));refreshUser();closeModal();};
+ $("#logoutBtn").onclick=()=>{user=null;unlocked=false;localStorage.removeItem("ambivial_demo_session");localStorage.removeItem("ambivial_demo_premium");downloaded=new Set();refreshUser();closeModal()};
+}
+$("#search").addEventListener("input",renderFiles);
+$("#menuBtn").onclick=()=>$("#drawer").classList.remove("hidden");
+$("#closeDrawer").onclick=$("#shade").onclick=()=>$("#drawer").classList.add("hidden");
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{const p=b.dataset.page;$("#drawer").classList.add("hidden");if(p==="account")showAccount();if(p==="premium")showPremium();if(p==="home")window.scrollTo({top:0,behavior:"smooth"})});
+$("#authTop").onclick=()=>user?showAccount():showAuth("signin");
+try{user=JSON.parse(localStorage.getItem("ambivial_demo_session")||"null");unlocked=localStorage.getItem("ambivial_demo_premium")==="true"}catch{}
+refreshUser();loadFiles();
+</script>
+</body>
+</html>
